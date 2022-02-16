@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Cekingx NFT</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h1>Admin Cekingx NFT</h1>
+      </div>
+      <div class="col-12">
+        <p>Stage: <span class="stage"></span></p>
+        <p>Contract URI: <span class="contract-uri"></span></p>
+        <p>Base URI: <span class="base-uri"></span></p>
+      </div>
+      <div class="col-12">
+        <button class="btn btn-primary mr-1 sale-stage">Sale Stage</button>
+        <button class="btn btn-primary mr-1 shutdown-stage">Shutdown Stage</button>
+      </div>
+      <div class="col-12">
+        <form class="row g-3 mt-1">
+          <div class="col-auto">
+            <label for="contract-uri-input" class="visually-hidden">Contract URI</label>
+            <input type="text" class="form-control" id="contract-uri-input" placeholder="Contract URI">
+          </div>
+          <div class="col-auto">
+            <button type="button" id="contract-uri-submit" class="btn btn-primary mb-3">Set Contract URI</button>
+          </div>
+        </form>
+      </div>
+      <div class="col-12">
+        <form class="row g-3 mt-1">
+          <div class="col-auto">
+            <label for="contract-uri-input" class="visually-hidden">Base URI</label>
+            <input type="text" class="form-control" id="base-uri-input" placeholder="Base URI">
+          </div>
+          <div class="col-auto">
+            <button type="button" id="base-uri-submit" class="btn btn-primary mb-3">Set Base URI</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="/assets/js/jquery.ba-tinypubsub.min.js"></script>
+
+  <script type="module">
+    import { ethers } from "/assets/js/ethers-5.2.esm.min.js";
+    import { address, abi } from "/abi.js";
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(address, abi, provider);
+    
+    async function stage() {
+      const text = await contract.stage();
+      $('.stage').text(text);
+    }
+
+    async function earning() {
+      const text = await contract.earning();
+      $('.earning').text(text);
+    }
+
+    async function initial() {
+      try {
+        const stage = await contract.stage();
+        const contractUri = await contract.contractURI();
+        const baseUri = await contract.baseURI();
+
+        $('.stage').text(stage);
+        $('.contract-uri').text(contractUri);
+        $('.base-uri').text(baseUri);
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    async function setSaleStage() {
+      try {
+        const withSigner = contract.connect(signer);
+        await withSigner.setStage(1);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    
+    async function setShutdownStage() {
+      try {
+        const withSigner = contract.connect(signer);
+        await withSigner.setStage(0);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function setContractUri(uri) {
+      try {
+        const withSigner = contract.connect(signer);
+        await withSigner.setContractURI(uri);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function setBaseUri(uri) {
+      try {
+        const withSigner = contract.connect(signer);
+        await withSigner.setBaseURI(uri);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    $(document).ready(() => {
+      initial();
+    });
+
+    $('.sale-stage').click(() => {
+      setSaleStage();
+    });
+
+    $('.shutdown-stage').click(() => {
+      setShutdownStage();
+    });
+
+    $('#contract-uri-submit').click(() => {
+      const uri = $('#contract-uri-input').val();
+      setContractUri(uri);
+    });
+
+    $('#base-uri-submit').click(() => {
+      const uri = $('#base-uri-input').val();
+      setBaseUri(uri);
+    });
+  </script>
+</body>
+
+</html>
