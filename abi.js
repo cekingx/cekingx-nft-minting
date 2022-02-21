@@ -192,9 +192,9 @@ export const abi = [
       "name": "earning",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "string",
           "name": "",
-          "type": "uint256"
+          "type": "string"
         }
       ],
       "stateMutability": "view",

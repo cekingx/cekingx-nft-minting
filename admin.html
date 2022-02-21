@@ -21,6 +21,7 @@
         <p>Stage: <span class="stage"></span></p>
         <p>Contract URI: <span class="contract-uri"></span></p>
         <p>Base URI: <span class="base-uri"></span></p>
+        <p>Earning: <span class="earning"></span></p>
       </div>
       <div class="col-12">
         <button class="btn btn-primary mr-1 sale-stage">Sale Stage</button>
@@ -81,10 +82,14 @@
         const stage = await contract.stage();
         const contractUri = await contract.contractURI();
         const baseUri = await contract.baseURI();
+        const earning = await contract.earning();
+        const eth = ethers.utils.formatEther(ethers.utils.parseUnits(earning, 'wei'));
+
 
         $('.stage').text(stage);
         $('.contract-uri').text(contractUri);
         $('.base-uri').text(baseUri);
+        $('.earning').text(eth + ' ETH');
       } catch (error) {
         console.error(error)
       }
